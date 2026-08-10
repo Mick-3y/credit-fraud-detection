@@ -14,7 +14,8 @@ coût d'une fausse alerte).
 1. `01_eda.ipynb` — volumétrie, déséquilibre des classes, types, NaN massifs
    **conservés** (XGBoost les gère nativement ; l'absence d'une donnée peut être un signal)
 2. `02_baseline.ipynb` — montants (log-normale), temps (6 mois ordonnés →
-   **validation temporelle**, jamais aléatoire), jointure identity, baseline XGBoost
+   **validation temporelle**, jamais aléatoire), jointure identity, baseline XGBoost,
+   seuil de blocage optimal en coût
 
 ## Résultat courant
 Baseline XGBoost (réglages par défaut, split temporel 80/20) : **PR-AUC = 0,497**
@@ -23,8 +24,12 @@ Baseline XGBoost (réglages par défaut, split temporel 80/20) : **PR-AUC = 0,49
 Concrètement : réglé pour attraper la moitié des fraudes, le modèle a raison une
 alerte sur deux ; réglé pour en attraper 70 %, une alerte sur quatre reste juste.
 
+Avec des coûts métier (fraude ratée ≈ 100 €, fausse alerte ≈ 5 €), le seuil
+optimal sort à 0,026 : le modèle coûte **168 k€** sur les 5 semaines de
+validation, contre 406 k€ sans modèle — **~238 k€ économisés**. Chiffre vérifié
+par deux routes indépendantes (formules precision/recall vs recomptage direct).
+
 ## Prochaines étapes
-- Seuil optimal en coût (fraude ratée ≈ 100 €, fausse alerte ≈ 5 €)
 - Feature engineering : décimales des montants, structure temporelle
 - Dégraissage des blocs V redondants (taux de NaN identiques par bloc)
 - Explicabilité SHAP
