@@ -16,6 +16,9 @@ coût d'une fausse alerte).
 2. `02_baseline.ipynb` — montants (log-normale), temps (6 mois ordonnés →
    **validation temporelle**, jamais aléatoire), jointure identity, baseline XGBoost,
    seuil de blocage optimal en coût
+3. `03_features.ipynb` — feature engineering guidé par la mesure : 3e décimale des
+   montants (signature de conversion de devise), heure du jour (cycle nocturne) ;
+   jour de semaine mesuré et écarté (taux plat, un résultat négatif documenté)
 
 ## Résultat courant
 Baseline XGBoost (réglages par défaut, split temporel 80/20) : **PR-AUC = 0,497**
@@ -29,7 +32,13 @@ optimal sort à 0,026 : le modèle coûte **168 k€** sur les 5 semaines de
 validation, contre 406 k€ sans modèle — **~238 k€ économisés**. Chiffre vérifié
 par deux routes indépendantes (formules precision/recall vs recomptage direct).
 
+Deux features construites depuis les colonnes brutes : `has_3dec` (10,5 % des
+transactions portent une 3e décimale — hypothèse : montants convertis d'une devise
+étrangère — et concentrent **35 % des fraudes**, taux 11,7 % contre 2,5 %) et
+`hour` (la nuit, le taux de fraude triple : les clients légitimes désertent, la
+fraude se voit). À configuration identique, la PR-AUC passe à **0,512** et le coût
+optimal descend à **166 230 €** (−1 830 € sur la fenêtre).
+
 ## Prochaines étapes
-- Feature engineering : décimales des montants, structure temporelle
 - Dégraissage des blocs V redondants (taux de NaN identiques par bloc)
 - Explicabilité SHAP
