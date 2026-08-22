@@ -19,6 +19,10 @@ coût d'une fausse alerte).
 3. `03_features.ipynb` — feature engineering guidé par la mesure : 3e décimale des
    montants (signature de conversion de devise), heure du jour (cycle nocturne) ;
    jour de semaine mesuré et écarté (taux plat, un résultat négatif documenté)
+4. `04_pruning.ipynb` — dégraissage des 339 colonnes V testé et **écarté** : les blocs
+   à taux de NaN identiques ne sont pas redondants (4 % des paires à |corr| > 0,9),
+   et couper les 181 colonnes corrélées dégrade le coût de 5 705 € — des colonnes
+   corrélées à 0,9 ne sont pas des copies, le modèle exploitait leurs différences
 
 ## Résultat courant
 Baseline XGBoost (réglages par défaut, split temporel 80/20) : **PR-AUC = 0,497**
@@ -40,5 +44,4 @@ fraude se voit). À configuration identique, la PR-AUC passe à **0,512** et le 
 optimal descend à **166 230 €** (−1 830 € sur la fenêtre).
 
 ## Prochaines étapes
-- Dégraissage des blocs V redondants (taux de NaN identiques par bloc)
-- Explicabilité SHAP
+- Explicabilité SHAP (sur le modèle de 03, colonnes complètes)
