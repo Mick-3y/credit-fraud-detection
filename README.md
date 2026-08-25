@@ -23,6 +23,8 @@ coût d'une fausse alerte).
    à taux de NaN identiques ne sont pas redondants (4 % des paires à |corr| > 0,9),
    et couper les 181 colonnes corrélées dégrade le coût de 5 705 € — des colonnes
    corrélées à 0,9 ne sont pas des copies, le modèle exploitait leurs différences
+5. `05_shap.ipynb` — explicabilité SHAP : vue globale (beeswarm) et explications
+   locales (waterfalls) — dont le pire faux positif, décomposé feature par feature
 
 ## Résultat courant
 Baseline XGBoost (réglages par défaut, split temporel 80/20) : **PR-AUC = 0,497**
@@ -43,5 +45,19 @@ transactions portent une 3e décimale — hypothèse : montants convertis d'une 
 fraude se voit). À configuration identique, la PR-AUC passe à **0,512** et le coût
 optimal descend à **166 230 €** (−1 830 € sur la fenêtre).
 
+Le modèle est auditable : SHAP décompose chaque score en contributions par colonne
+(additives exactement, en log-odds). Globalement, l'importance est très répartie ;
+le modèle a appris seul que cartes récentes (D1 faible) et navigateurs obsolètes
+(`id_31`) sont des profils à risque. `hour` se classe 33e/434 ; `has_3dec` 302e —
+redondante *en marginal* (son info est déjà portée en pièces détachées par
+`TransactionAmt` et ses voisines) mais utile *en ablation* : signal univarié fort,
+contribution marginale et delta de retrain sont trois mesures différentes.
+
+## Limites
+- Les colonnes Vesta (V, C, D...) sont anonymisées : SHAP dit **quelle** colonne
+  décide (V258, C1 dominent les deux waterfalls), pas ce qu'elle signifie métier.
+- Un seul split temporel : les chiffres (PR-AUC, coûts) n'ont pas de barre d'erreur.
+- Coûts métier fixés à dire d'expert (100 € / 5 €) — le seuil optimal en dépend.
+
 ## Prochaines étapes
-- Explicabilité SHAP (sur le modèle de 03, colonnes complètes)
+- Relecture finale des 5 notebooks, publication du repo
