@@ -58,6 +58,7 @@ contribution marginale et delta de retrain sont trois mesures différentes.
   décide (V258, C1 dominent les deux waterfalls), pas ce qu'elle signifie métier.
 - Un seul split temporel : les chiffres (PR-AUC, coûts) n'ont pas de barre d'erreur.
 - Coûts métier fixés à dire d'expert (100 € / 5 €) — le seuil optimal en dépend.
-
-## Prochaines étapes
-- Relecture finale des 5 notebooks, publication du repo
+- Le signal "présence d'identity" (2,1 % de fraude sans, 7,8 % avec) suppose que ces
+  données sont collectées au moment de la transaction, pas après coup lors d'une
+  enquête fraude — hypothèse plausible (pratique connue du vrai dataset Vesta) mais
+  jamais vérifiée dans ces notebooks. Si elle était fausse, ce serait une fuite.
